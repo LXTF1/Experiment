@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hitung Total Pembayaran</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Hitung Total Pembayaran Setelah Diskon</h1>
+<button id="startButton">Mulai Perhitungan</button>
+
+<div id="inputSection" style="display:none;">
+    <h2>Masukkan Jumlah Item</h2>
+    <input type="number" id="itemCount" placeholder="Jumlah Item" min="1">
+    <button id="submitItemCount">Submit</button>
+
+    <div id="priceInputs" style="display:none;">
+        <h2>Masukkan Harga Setiap Item</h2>
+    </div>
+</div>
+
+<div id="result" style="display:none;"></div>
+
+<script>
+    document.getElementById('startButton').addEventListener('click', function() {
+        document.getElementById('inputSection').style.display = 'block';
+    });
+
+    document.getElementById('submitItemCount').addEventListener('click', function() {
+        const itemCount = parseInt(document.getElementById('itemCount').value);
+        if (isNaN(itemCount) || itemCount < 1) {
+            alert("Silakan masukkan jumlah item yang valid.");
+            return;
+        }
+
+        document.getElementById('priceInputs').style.display = 'block';
+        document.getElementById('priceInputs').innerHTML = '<h2>Masukkan Harga Setiap Item</h2>';
+        
+        for (let i = 0; i < itemCount; i++) {
+            document.getElementById('priceInputs').innerHTML += `
+                <input type="number" class="itemPrice" placeholder="Harga Item ${i + 1}" min="0">
+            `;
+        }
+
+        const calculateButton = document.createElement('button');
+        calculateButton.innerText = 'Hitung Total';
+        calculateButton.addEventListener('click', calculateTotal);
+        document.getElementById('priceInputs').appendChild(calculateButton);
+    });
+
+    function calculateTotal() {
+        const prices = document.querySelectorAll('.itemPrice');
+        let total = 0;
+
+        prices.forEach(priceInput => {
+            const price = parseFloat(priceInput.value);
+            if (!isNaN(price) && price >= 0) {
+                total += price;
+            }
+        });
+
+        let discount = 0;
+
+        if (prices.length > 3) {
+            discount += 0.05; // Diskon 5%
+        }
+
+        if (total > 100000) {
+            discount += 0.10; // Diskon tambahan 10%
+        }
+
+        const finalTotal = total * (1 - discount);
+        document.getElementById('result').innerText = `Total Pembayaran Setelah Diskon: Rp${finalTotal.toFixed(2)}`;
+        document.getElementById('result').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
